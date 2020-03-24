@@ -14,6 +14,7 @@ pg_1718 = pd.read_csv("pg_1718.csv", index_col = False)
 pg_1819 = pd.read_csv("pg_1819.csv", index_col = False)
 pg_1920 = pd.read_csv("pg_1920.csv", index_col = False)
 
+#Add new column 'Season' for filtering later 
 pg_1112['Season'] = 2011
 pg_1213['Season'] = 2012
 pg_1314['Season'] = 2013
@@ -30,12 +31,11 @@ pg = pd.concat([pg_1112, pg_1213, pg_1314, pg_1415, pg_1516, pg_1617, pg_1718, p
 #Filter out any games in which he did not play
 pg['MP'].value_counts() #to determine labels for when he did not play
 pg = pg[~(pg['MP'] == 'Inactive') & ~(pg['MP'] == 'Did Not Dress') & ~(pg['MP'] == 'Did Not Play')]
-pg['Rk'] = range(pg.shape[0]) #for indexing purposes
 pg['Date'] = pd.to_datetime(pg['Date'], format = '%d/%m/%Y').dt.date #convert date columns into date format to split table into before and after all-star game
 float_cols = ['FG%','3P%', 'FT%', 'GmSc']
 int_cols = ['FG', 'FGA',  '3P', '3PA', 'FT', 'FTA',  'ORB', 'DRB', 'TRB', 'AST', 'STL', 'BLK', 'TOV', 'PF', 'PTS',  '+/-',]
-pg[float_cols] = pg[float_cols].astype(float)
-pg[int_cols] = pg[int_cols].astype(int)
+pg[float_cols] = pg[float_cols].astype(float) #convert object type columns to float
+pg[int_cols] = pg[int_cols].astype(int) #convert object type columns to integer
 pg.info()
 
 #Convert MP column to time format
@@ -92,7 +92,5 @@ def comparison(category, year):
 
 
 
-comparison('FG%', 2016)
 
 
-#make bar chart of mean fg%, pts, +/- for before and after all-star game for each season
