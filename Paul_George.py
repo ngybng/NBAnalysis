@@ -38,18 +38,11 @@ pg[float_cols] = pg[float_cols].astype(float) #convert object type columns to fl
 pg[int_cols] = pg[int_cols].astype(int) #convert object type columns to integer
 pg.info()
 
-#Convert MP column to time format
-pg['MP'][pg['MP'].str.count(":") == 1] += ":00" #some time formats do not have microseconds, therefore add them to those that don't have so can convert all to time format
-pg['MP'] = pg['MP'].str.replace(":00$","")
-seconds_played = (pd.to_datetime(pg['MP'], format = '%M:%S').dt.minute)*60 + (pd.to_datetime(pg['MP'], format = '%M:%S').dt.second)
-mean_seconds_played = (seconds_played.sum())/543
-mean_minutes_played = mean_seconds_played/60
-mean_duration_played = dt.datetime.strptime(str(int(math.modf(mean_minutes_played)[1])) + ":" + str(round(math.modf(mean_minutes_played)[0]*60)), '%M:%S').strftime('%M:%S')
-#(pd.to_datetime(pg['MP'], format = '%M:%S').dt.time > mean_duration_played.time()).sum()
-
 
 def comparison(category, year):  
     allstaryear = year + 1 #All star year begins in year after the year in which season starts e.g. 2011-2012 season will have 2012 all-star game
+    
+    #Define function that takes year input and extracts All-Star Game date from corresponding Wikipedia article
     def asg_date(allstaryear):
         if year < 2010:
             return("Haven't made debut yet")
@@ -67,8 +60,9 @@ def comparison(category, year):
             date = dt.datetime.strptime(date,  '%B %d, %Y').date()
             return date
     
+    #Filters relevant data from combined dataset based on year input
     pg_season = pg.loc[pg['Season'] == year]
-    bfasg = pg_season.loc[pg_season['Date'] < asg_date(allstaryear)]
+    bfasg = pg_season.loc[pg_season['Date'] < asg_date(allstaryear)] #Splits dataset into before and after all-star game (date extracted in previous function)
     afasg = pg_season.loc[pg_season['Date'] > asg_date(allstaryear)]
     
     
