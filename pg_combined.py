@@ -1,6 +1,5 @@
 import pandas as pd
 import datetime as dt
-#import math
 import requests
 from bs4 import BeautifulSoup
 
@@ -34,8 +33,7 @@ pg = extract_pg_stats(2011,2011) #Example
 
 #Filter out any games in which he did not play
 pg = pg.loc[~(pg['MP'].isnull())]
-#pg['GS'].value_counts() #to determine labels for when he did not play
-#pg = pg[~(pg['GS'] == 'Inactive') & ~(pg['GS'] == 'Did Not Dress') & ~(pg['GS'] == 'Did Not Play')]
+
 
 #Add for indexing purposes
 pg['Rk'] = range(pg.shape[0])
@@ -51,14 +49,7 @@ for col in float_cols:
 pg[int_cols] = pg[int_cols].astype(int)
 pg.info()
 
-#Convert MP column to time format
-#pg['MP'][pg['MP'].str.count(":") == 1] += ":00" #some time formats do not have microseconds, therefore add them to those that don't have so can convert all to time format
-#pg['MP'] = pg['MP'].str.replace(":00$","")
-#seconds_played = (pd.to_datetime(pg['MP'], format = '%M:%S').dt.minute)*60 + (pd.to_datetime(pg['MP'], format = '%M:%S').dt.second)
-#mean_seconds_played = (seconds_played.sum())/543
-#mean_minutes_played = mean_seconds_played/60
-#mean_duration_played = dt.datetime.strptime(str(int(math.modf(mean_minutes_played)[1])) + ":" + str(round(math.modf(mean_minutes_played)[0]*60)), '%M:%S').strftime('%M:%S')
-#(pd.to_datetime(pg['MP'], format = '%M:%S').dt.time > mean_duration_played.time()).sum()
+
 
 
 def comparison(category, year):  #year input is the season in which the all-star game belongs to. Therefore if want all-star game in 2011-2012 season, enter 2011
@@ -108,4 +99,3 @@ def comparison(category, year):  #year input is the season in which the all-star
 comparison('FG%', 2011) 
 
 
-#make bar chart of mean fg%, pts, +/- for before and after all-star game for each season
