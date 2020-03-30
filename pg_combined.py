@@ -158,7 +158,7 @@ def bar_chart_comparison(category, start_year, end_year):
     plt.bar(r2, bars2, color='blue', width=barWidth, edgecolor='white', label='After All Star Game mean {}'.format(category))
     plt.xlabel('Season', fontweight='bold')
     plt.xticks([r + barWidth for r in range(len(bars1))], list(range(start_year,end_year+1)))
-    
+    plt.title("Paul George Average {} by Season". format(category))
     plt.legend()
     plt.show()
 
