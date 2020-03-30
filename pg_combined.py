@@ -83,8 +83,83 @@ def comparison(category, year):  #year input is the season in which the all-star
     return plt.show()
 
 
-
-
 comparison('FG%', 2012) #Show performance before and after 2013 All-Star game (2012-2013 Season)
+
+#Generate bar chart for each season comparing mean of desired category before and after all-star break
+def bar_chart_comparison(category, start_year, end_year):
+
+    def afasg_mean(category, year):  #year input is the season in which the all-star game belongs to. Therefore if want all-star game in 2011-2012 season, enter 2011
+        allstaryear = year + 1 #All star year begins in year after the year in which season starts e.g. 2011-2012 season will have 2012 all-star game
+        def asg_date(allstaryear):
+            if year < 2010:
+                return("Haven't made debut yet")
+            elif  year > 2019:
+                return("Hasn't taken place yet")
+    
+            else:
+                url = "https://en.wikipedia.org/wiki/{}_NBA_All-Star_Game".format(allstaryear)
+                page = requests.get(url)
+                soup = BeautifulSoup(page.content, 'html.parser')
+                tb = soup.find('table', class_='infobox vevent')
+                tb_1 = tb.find('tbody')
+                date = tb_1.find_all('tr')[5]
+                date = date.find('td').get_text()
+                date = dt.datetime.strptime(date,  '%B %d, %Y').date()
+                return date
+    
+        pg_season = pg.loc[pg['Season'] == year]
+        afasg = pg_season.loc[pg_season['Date'] > asg_date(allstaryear)]
+        afasg_dist = afasg[category].describe().values[1]
+        return afasg_dist
+    
+    def bfasg_mean(category, year):  #year input is the season in which the all-star game belongs to. Therefore if want all-star game in 2011-2012 season, enter 2011
+        allstaryear = year + 1 #All star year begins in year after the year in which season starts e.g. 2011-2012 season will have 2012 all-star game
+        def asg_date(allstaryear):
+            if year < 2010:
+                return("Haven't made debut yet")
+            elif  year > 2019:
+                return("Hasn't taken place yet")
+            
+            else:
+                url = "https://en.wikipedia.org/wiki/{}_NBA_All-Star_Game".format(allstaryear)
+                page = requests.get(url)
+                soup = BeautifulSoup(page.content, 'html.parser')
+                tb = soup.find('table', class_='infobox vevent')
+                tb_1 = tb.find('tbody')
+                date = tb_1.find_all('tr')[5]
+                date = date.find('td').get_text()
+                date = dt.datetime.strptime(date,  '%B %d, %Y').date()
+                return date
+    
+        pg_season = pg.loc[pg['Season'] == year]
+        bfasg = pg_season.loc[pg_season['Date'] < asg_date(allstaryear)]
+        bfasg_dist = bfasg[category].describe().values[1]
+        return bfasg_dist
+
+    pg_mean = pd.DataFrame()
+    bfasg_list = []
+    afasg_list = []
+    for i in range(start_year,end_year+1):
+        bfasg_list.append(bfasg_mean(category, i))
+        afasg_list.append(afasg_mean(category, i))
+    
+    pg_mean['Before All Star Game Mean'] = bfasg_list
+    pg_mean['After All Star Game Mean'] = afasg_list
+    #https://python-graph-gallery.com/11-grouped-barplot/
+
+    barWidth = 0.25
+    bars1 = pg_mean['Before All Star Game Mean']
+    bars2 = pg_mean['After All Star Game Mean']
+
+    r1 = np.arange(len(bars1)) #arange(len(bars1)) + barWidth
+    r2 = [x + barWidth for x in r1]
+
+    plt.bar(r1, bars1, color='yellow', width=barWidth, edgecolor='white', label='Before All Star Game mean {}'.format(category))
+    plt.bar(r2, bars2, color='blue', width=barWidth, edgecolor='white', label='After All Star Game mean {}'.format(category))
+    plt.xlabel('Season', fontweight='bold')
+    plt.xticks([r + barWidth for r in range(len(bars1))], list(range(start_year,end_year+1)))
+    
+    plt.legend()
+    return plt.show()
 
 
