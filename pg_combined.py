@@ -80,7 +80,7 @@ def comparison(category, year):  #year input is the season in which the all-star
     plt.title("Paul George {year}-{year1}".format(year = year, year1 = year + 1))
     print(bfasg[category].describe())
     print(afasg[category].describe())
-    return plt.show()
+    plt.show()
 
 
 comparison('FG%', 2012) #Show performance before and after 2013 All-Star game (2012-2013 Season)
@@ -160,6 +160,6 @@ def bar_chart_comparison(category, start_year, end_year):
     plt.xticks([r + barWidth for r in range(len(bars1))], list(range(start_year,end_year+1)))
     
     plt.legend()
-    return plt.show()
+    plt.show()
 
 
